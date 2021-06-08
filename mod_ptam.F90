@@ -12,7 +12,7 @@ module ptam
 
   integer :: numPTs = 10
   logical :: isFlat = .false., isNotSo = .true.
-  integer :: nkCriti = 0, nkLimit = 9999
+  integer :: nkCriti = 1, nkLimit = 9999
 
   real(MK), allocatable :: valuePTs(:)
 
