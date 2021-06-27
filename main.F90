@@ -12,8 +12,8 @@ program main
   nkc = int(kc / dk) + 1
   nkl = int(kl / dk) + 1
 
-  call ptamInit(npt, nkc, nkl)
-  rptam = ptamRun(exfunc, dk)
+  call ptamInit(dk, npt, nkc, nkl)
+  rptam = ptamRun(exfunc)
   call ptamFinal()
 
   r = exfunc()

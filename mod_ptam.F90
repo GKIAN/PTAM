@@ -13,6 +13,7 @@ module ptam
   integer :: numPTs = 10
   logical :: isFlat = .false., isNotSo = .true.
   integer :: nkCriti = 1, nkLimit = 9999
+  real(MK) :: dk = 0.0_MK
 
   real(MK), allocatable :: valuePTs(:)
 
@@ -20,11 +21,15 @@ module ptam
 
   contains
 
-    subroutine ptamInit(npt, nkc, nkl)
+    subroutine ptamInit(dk_, npt, nkc, nkl)
+      real(MK), intent(in) :: dk_
       integer, intent(in), optional :: npt, nkc, nkl
+
+      dk = dk_
       if(present(npt)) numPTs = npt
       if(present(nkc)) nkCriti = nkc
       if(present(nkl)) nkLimit = nkl
+
       isFlat = .false.
       isNotSo = .true.
       allocate(valuePTs(numPTs))
@@ -35,9 +40,8 @@ module ptam
       if(allocated(valuePTs)) deallocate(valuePTs)
     end subroutine ptamFinal
 
-    real(MK) function ptamRun(func, dk) result(res)
+    real(MK) function ptamRun(func) result(res)
       real(MK), external :: func
-      real(MK), intent(in) :: dk
       real(MK) :: k(3), S(3), kExtre
       integer :: iPT = 0
       integer i, j
