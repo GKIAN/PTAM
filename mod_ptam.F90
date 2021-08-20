@@ -59,7 +59,7 @@ module ptam
       S(3) = S(2) + func(k(3)) * dk
 
       i = nkCriti + 2
-      do while(.true.)
+      do while(iPT < numPTs)
         if(i > nkLimit) then
           if(isFlat) then
             exit
@@ -70,8 +70,6 @@ module ptam
           end if
         end if
 
-        if(iPT == numPTs) exit
-
         if(S(1) == S(2) .and. S(2) == S(3)) then
           ! almost not-oscillatory integrand, a flat peak/trough
           if(.not. isFlat) then
@@ -80,6 +78,9 @@ module ptam
           end if
           if(isNotSo) then
             ! for a flat peak/trough, only take one value at the first point
+            !           (*) - * - *     *
+            ! that is,  /           and  \
+            !          *                 (*) - * - *
             iPT = iPT + 1
             valuePTs(iPT) = S(1)
 #ifdef DEBUG
@@ -91,10 +92,13 @@ module ptam
           if(isFlat) then
             ! the integrand is not invariable at all time
             isNotSo = .true.
-          else if((S(2) - S(1)) * (S(2) - S(3)) >= 0.0_MK) then
-            ! only if the integrand is absolutely oscillatory
+          else if((S(2) - S(1)) * (S(2) - S(3)) > 0.0_MK .or. S(2) == S(3)) then
+            ! only if the integrand is absolutely oscillatory,
+            !             * - *     *             * - *            *
+            ! only take  /      and  \      , not      \  or      /
+            !           *             * - *             *    * - *
             iPT = iPT + 1
-            kExtre = getExtreme_(k, S, valuePTs(iPT))
+            valuePTs(iPT) = getExtreme_(k, S, ex = kExtre)
 #ifdef DEBUG
             write(*, '(A, I0, 6(2X, G0))') 'iPT = ', iPT, k, S
             write(*, '(A, 3(2X, G0))') '  ', S(2) - S(1), S(2) - S(3), kExtre
@@ -119,9 +123,9 @@ module ptam
 
     end function ptamRun
 
-    real(MK) function getExtreme_(k, S, ey) result(ex)
+    real(MK) function getExtreme_(k, S, ex) result(ey)
       real(MK), intent(in) :: k(3), S(3)
-      real(MK), intent(out) :: ey
+      real(MK), intent(out), optional :: ex
       real(MK) :: a(3)
       a(1) = 2.0_MK * S(3) - 4.0_MK * S(2) + 2.0_MK * S(1)
       a(2) = 4.0_MK * S(2) - S(3) - 3.0_MK * S(1)
