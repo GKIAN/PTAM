@@ -12,7 +12,7 @@ Tche LIU, seistche@gmail.com, USTC
 
 ## Description
 
-[mod_ptam](mod_ptam.F90) is a `fortran` module used to implement the peak trough averaging method to an external function.
+[mod_ptam](mod_ptam.F90) is a `fortran` module used to implement the peak trough averaging method (PTAM) to an external function.
 
 To illustrate how to use the fortran module, I take the equation (6b) in (张海明等, 2001) as an example:
 
@@ -25,6 +25,8 @@ The PTAM result is: 0.333209425
 The analytical result is: 0.333222240
 The relative error is: -0.384578125E-4
 ```
+
+Besides, [example](example.F90) is a simple and useful instance that do NOT use the completely accurate algorithm of PTAM as [mod_ptam](mod_ptam.F90).
 
 ## Reference
 
