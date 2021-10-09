@@ -15,18 +15,17 @@ program main
   integer :: ipt
   logical :: ga = .false.
 
-  real(kind = MK) :: rptam, r
+  real(kind = MK) :: rptam, ranal
 
-  r = exfunc()
+  ranal = exfunc()
 
   k = dk
   S = 0.0_MK
   do while(.true.)
-    dS = exfunc(k) * dk / 2.0_MK
+    dS = exfunc(k) * dk
     S(2) = S(2) + dS
     if(k > kc) exit
     S(1) = S(2)
-    S(2) = S(2) + dS
     k = k + dk
   end do
 
@@ -43,12 +42,11 @@ program main
     S(2) = S(3)
   end do
 
-  call ptamReduce(ipt, vpt)
-  rptam = vpt(1)
+  rptam = ptamReduce(ipt, vpt)
 
   write(*, '(A, G0)') 'The PTAM result is: ', rptam
-  write(*, '(A, G0)') 'The analytical result is: ', r
-  write(*, '(A, G0)') 'The relative error is: ', (rptam - r)/r
+  write(*, '(A, G0)') 'The analytical result is: ', ranal
+  write(*, '(A, G0)') 'The relative error is: ', (rptam - ranal)/ranal
 
   contains
 
@@ -90,7 +88,7 @@ program main
       gotAll = (ipt >= npt)
     end function ptamGather
 
-    subroutine ptamReduce(ipt, vpt)
+    real(kind = MK) function ptamReduce(ipt, vpt) result(r)
       integer, intent(in) :: ipt
       real(kind = MK), intent(inout) :: vpt(:)
       integer :: i, j
@@ -99,7 +97,8 @@ program main
           vpt(j) = (vpt(j) + vpt(j + 1)) / 2.0_MK
         end do
       end do
-    end subroutine ptamReduce
+      r = vpt(1)
+    end function ptamReduce
 
 end program main
 
