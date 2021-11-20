@@ -128,10 +128,17 @@ module ptam
       real(MK), intent(out), optional :: ex
       real(MK) :: a(3)
       a(1) = 2.0_MK * S(3) - 4.0_MK * S(2) + 2.0_MK * S(1)
-      a(2) = 4.0_MK * S(2) - S(3) - 3.0_MK * S(1)
-      a(3) = S(1)
-      ex = k(1) - a(2) / (2.0_MK * a(1)) * (k(3) - k(1))
-      ey = a(3) - a(2) * a(2) / (4.0_MK * a(1))
+      if(a(1) == 0.0_MK) then
+        ! if there is only a tiny difference between S(1) with S(2) when S(2)
+        !&  is equal to S(3)
+        ex = k(2)
+        ey = S(2)
+      else
+        a(2) = 4.0_MK * S(2) - S(3) - 3.0_MK * S(1)
+        a(3) = S(1)
+        ex = k(1) - a(2) / (2.0_MK * a(1)) * (k(3) - k(1))
+        ey = a(3) - a(2) * a(2) / (4.0_MK * a(1))
+      end if
     end function getExtreme_
 
   end module ptam

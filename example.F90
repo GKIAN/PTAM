@@ -73,9 +73,15 @@ program main
       else if((S(2) - S(1)) * (S(2) - S(3)) > 0.0_MK .or. S(2) == S(3)) then
         ifput = .true.
         a(1) = 2.0_MK * S(3) - 4.0_MK * S(2) + 2.0_MK * S(1)
-        a(2) = 4.0_MK * S(2) - S(3) - 3.0_MK * S(1)
-        a(3) = S(1)
-        toput = a(3) - a(2) * a(2) / (4.0_MK * a(1))
+        if(a(1) == 0.0_MK) then
+          ! if there is only a tiny difference between S(1) with S(2) when S(2)
+          !&  is equal to S(3)
+          toput = S(2)
+        else
+          a(2) = 4.0_MK * S(2) - S(3) - 3.0_MK * S(1)
+          a(3) = S(1)
+          toput = a(3) - a(2) * a(2) / (4.0_MK * a(1))
+        end if
       end if
       if(ifput) then
         ipt = ipt + 1
